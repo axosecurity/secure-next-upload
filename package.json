@@ -1,0 +1,66 @@
+{
+  "name": "@axosecurity/universal-uploader",
+  "version": "1.0.0",
+  "description": "Production-grade, zero-server-bandwidth universal multi-entity file and media upload system with 5-layer security verification for Next.js and modern web apps.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./server": {
+      "types": "./src/server/index.ts",
+      "import": "./src/server/index.ts",
+      "default": "./src/server/index.ts"
+    },
+    "./client": {
+      "types": "./src/client/index.ts",
+      "import": "./src/client/index.ts",
+      "default": "./src/client/index.ts"
+    },
+    "./config": {
+      "types": "./src/config/index.ts",
+      "import": "./src/config/index.ts",
+      "default": "./src/config/index.ts"
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "file-upload",
+    "avatar-upload",
+    "s3",
+    "cloudflare-r2",
+    "presigned-url",
+    "zero-bandwidth",
+    "magic-bytes",
+    "security",
+    "nextjs",
+    "react",
+    "drizzle",
+    "prisma"
+  ],
+  "author": "Axo Security",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/s3-request-presigner": "^3.600.0",
+    "browser-image-compression": "^2.0.2",
+    "sonner": "^1.5.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0 || ^19.0.0",
+    "@types/react-dom": "^18.0.0 || ^19.0.0",
+    "typescript": "^5.4.0"
+  }
+}

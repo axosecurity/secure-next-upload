@@ -1,0 +1,34 @@
+// Drop-in Prisma Schema Models for Universal Uploader
+
+model UploadIntent {
+  id                    String    @id @default(uuid())
+  userId                String?   @map("user_id")
+  entityType            String    @default("general") @map("entity_type")
+  objectKey             String    @unique @map("object_key")
+  originalFileName      String    @map("original_file_name")
+  mimeType              String    @map("mime_type")
+  fileSize              Int       @map("file_size")
+  status                String    @default("pending") // pending | completed | failed | expired
+  metadata              Json?
+  presignedUrlExpiresAt DateTime  @map("presigned_url_expires_at")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  completedAt           DateTime? @map("completed_at")
+
+  @@index([userId, status])
+  @@index([entityType, status])
+  @@map("upload_intents")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  userId       String?  @map("user_id")
+  action       String
+  resourceType String?  @map("resource_type")
+  resourceId   String?  @map("resource_id")
+  metadata     Json?
+  ipAddress    String?  @map("ip_address")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([userId, createdAt])
+  @@map("audit_logs")
+}
