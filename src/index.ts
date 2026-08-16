@@ -1,10 +1,10 @@
 /**
- * @axosecurity/universal-uploader
- * Production-grade, zero-server-bandwidth universal multi-entity file & media upload system.
+ * @axosecurity/secure-next-upload
+ * Production-grade, zero-server-bandwidth secure multi-entity file & media upload system.
  * 
  * @author axosolaman (Axo Security)
  * @see https://github.com/axosolaman
- * @see https://github.com/axosecurity/universal-uploader
+ * @see https://github.com/axosecurity/secure-next-upload
  * @license MIT
  */
 

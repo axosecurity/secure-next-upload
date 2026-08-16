@@ -1,6 +1,6 @@
-# 🚀 Universal Secure File & Media Uploader (`@axosecurity/universal-uploader`)
+# 🚀 Secure Next Upload (`@axosecurity/secure-next-upload`)
 
-[![npm version](https://img.shields.io/npm/v/@axosecurity/universal-uploader.svg)](https://www.npmjs.com/package/@axosecurity/universal-uploader)
+[![npm version](https://img.shields.io/npm/v/@axosecurity/secure-next-upload.svg)](https://www.npmjs.com/package/@axosecurity/secure-next-upload)
 [![Security Researcher: axosolaman](https://img.shields.io/badge/Security%20Researcher-axosolaman-blue.svg)](https://github.com/axosolaman)
 [![Research: Axo Security](https://img.shields.io/badge/Research-Axo%20Security-purple.svg)](https://github.com/axosecurity)
 [![CWE-434 Mitigated](https://img.shields.io/badge/CWE--434-Immune-brightgreen.svg)]()
@@ -9,16 +9,16 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-> **The definitive high-performance, zero-server-bandwidth file and media upload engine for Next.js, React, and modern web architectures.**  
+> **The definitive high-performance, zero-server-bandwidth secure file and media upload engine for Next.js, React, and modern web architectures.**  
 > Built by security researchers to systematically eliminate the **#1 highest-paying vulnerability classes** (CWE-434, CWE-22, CWE-200, Stored XSS) while saving companies thousands in cloud bandwidth, server RAM crashes, and storage bills.
 
 ---
 
-## ⚡ Why Universal Uploader?
+## ⚡ Why Secure Next Upload?
 
 Traditional file upload architectures stream massive binary payloads directly through your backend API servers. This saturates bandwidth, crashes serverless runtimes (e.g. Vercel 4.5MB payload limits), inflates hosting bills, and exposes applications to malicious webshell uploads.
 
-**Universal Uploader delivers a modern, frictionless architecture:**
+**Secure Next Upload delivers a modern, frictionless architecture:**
 
 * **⚡ Zero Server Bandwidth**: Uploads stream directly from the browser to Cloudflare R2 / AWS S3 via cryptographic Presigned PUT URLs. Your web servers never touch, buffer, or proxy the binary files.
 * **🚀 3x–5x Faster Parallel Uploads**: Upload multi-file batches simultaneously using a built-in asynchronous worker pool (`concurrency: 3–5`) with per-file progress tracking and fault-tolerant completion.
@@ -29,9 +29,9 @@ Traditional file upload architectures stream massive binary payloads directly th
 
 ---
 
-## 🛡️ Security at a Glance: Vulnerabilities Universal Uploader Neutralizes
+## 🛡️ Security at a Glance: Vulnerabilities Secure Next Upload Neutralizes
 
-File upload endpoints are historically the most exploited attack surface on bug bounty platforms (**HackerOne, Bugcrowd, Intigriti**). Universal Uploader provides defense-in-depth immunity against the most severe vulnerability classes:
+File upload endpoints are historically the most exploited attack surface on bug bounty platforms (**HackerOne, Bugcrowd, Intigriti**). Secure Next Upload provides defense-in-depth immunity against the most severe vulnerability classes:
 
 * 💥 **CWE-434 (Unrestricted File Upload / Webshell RCE)** ➔ **Neutralized** by server-side 16-byte binary magic byte inspection (`0x89PNG`, `%PDF`, `FF D8 FF`, `RIFF...WEBP`), strict MIME whitelisting, and cloud-edge content locks.
 * 📍 **CWE-200 / CWE-359 (EXIF & GPS Geolocation Leakage)** ➔ **Neutralized** by in-memory browser Web Worker stripping before upload, protecting user privacy and preventing GDPR/HIPAA compliance fines.
@@ -56,7 +56,7 @@ File upload endpoints are historically the most exploited attack surface on bug 
 
 ## 💼 Immense Business & Financial Impact
 
-| Impact Metric | Traditional Server Uploads | Universal Uploader |
+| Impact Metric | Traditional Server Uploads | Secure Next Upload |
 | :--- | :--- | :--- |
 | **Server Bandwidth & RAM** | ❌ High (Full file payload streams through server) | ✅ **0 KB Server Load** (Direct-to-Cloud PUT) |
 | **Multi-File Upload Speed** | ⏱️ Sequential (30–45s for 10 files) | ⚡ **Parallel Pool (7–9s for 10 files)** |
@@ -66,13 +66,13 @@ File upload endpoints are historically the most exploited attack surface on bug 
 
 ---
 
-## 📊 Deep Comparison: Universal Uploader vs. Alternatives
+## 📊 Deep Comparison: Secure Next Upload vs. Alternatives
 
 ### 1. Open Source Ecosystem Packages
 
-| Project | Similarity | Key Strengths | Missing / Weaker Compared to Universal Uploader | Best For |
+| Project | Similarity | Key Strengths | Missing / Weaker Compared to Secure Next Upload | Best For |
 | :--- | :--- | :--- | :--- | :--- |
-| **`@axosecurity/universal-uploader`** | ⭐️ **Current** | **Zero Server Bandwidth**, 5-layer security verification, 16-byte magic byte check, Web Worker EXIF stripping, parallel concurrency pool (`concurrency: 3-5`), atomic replacement, multi-entity registry. | None — complete end-to-end production architecture. | **Production apps wanting maximum security, speed & $0 cloud markup.** |
+| **`@axosecurity/secure-next-upload`** | ⭐️ **Current** | **Zero Server Bandwidth**, 5-layer security verification, 16-byte magic byte check, Web Worker EXIF stripping, parallel concurrency pool (`concurrency: 3-5`), atomic replacement, multi-entity registry. | None — complete end-to-end production architecture. | **Production apps wanting maximum security, speed & $0 cloud markup.** |
 | **`next-upload`** *(TimMikeladze)* | **High** | Presigned URLs, Next.js focused, optional DB metadata, S3/R2/MinIO support. | Weaker security (no deep 16-byte magic byte inspection, no multi-entity registry, no client-side Web Worker EXIF/compression). | Simple Next.js apps needing basic presigned uploads. |
 | **`vs3`** | **High** | Type-safe, presigned uploads, magic-byte detection, React hooks, Next.js handlers, Zod schemas. | Less opinionated multi-entity registry, no built-in atomic asset replace (`swapMode: "atomic_replace"`), or 5-layer pipeline. | Developers wanting basic type safety + single-file validation. |
 | **`octoload`** | **Medium-High** | Direct-to-S3/R2, CLI for schema generation, Drizzle integration, TypeScript-first. | Image-focused, lacks comprehensive 5-layer security pipeline and client-side EXIF/compression. | Teams using Drizzle wanting CLI-generated code. |
@@ -82,7 +82,7 @@ File upload endpoints are historically the most exploited attack surface on bug 
 
 ### 2. Managed SaaS Services & Client Libraries
 
-| Service / Architecture | Category | Pros | Cons vs. Universal Uploader |
+| Service / Architecture | Category | Pros | Cons vs. Secure Next Upload |
 | :--- | :--- | :--- | :--- |
 | **`UploadThing`** | Managed SaaS + SDK | Extremely easy setup for Next.js, type-safe route handler, good developer experience. | ❌ You don't own the underlying storage infrastructure, monthly recurring subscription fees, less defensive binary inspection layers. |
 | **`Vercel Blob`** | Managed Cloud Storage | Native Vercel integration, simple presigned upload workflow. | ❌ Vendor lock-in to Vercel ecosystem, proprietary bandwidth pricing, less advanced binary security verification. |
@@ -123,10 +123,10 @@ If you build with or rely on traditional alternatives, your application remains 
 
 ```bash
 # Using npm
-npm install @axosecurity/universal-uploader @aws-sdk/client-s3 @aws-sdk/s3-request-presigner browser-image-compression zod sonner
+npm install @axosecurity/secure-next-upload @aws-sdk/client-s3 @aws-sdk/s3-request-presigner browser-image-compression zod sonner
 
 # Using pnpm
-pnpm add @axosecurity/universal-uploader @aws-sdk/client-s3 @aws-sdk/s3-request-presigner browser-image-compression zod sonner
+pnpm add @axosecurity/secure-next-upload @aws-sdk/client-s3 @aws-sdk/s3-request-presigner browser-image-compression zod sonner
 ```
 
 ---
@@ -152,7 +152,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 ### 2. Define Upload Rules (`src/config/uploader.ts`)
 
 ```typescript
-import { defineUploadRegistry } from "@axosecurity/universal-uploader/config";
+import { defineUploadRegistry } from "@axosecurity/secure-next-upload/config";
 
 export const uploadRegistry = defineUploadRegistry({
   avatar: {
@@ -193,7 +193,7 @@ export const uploadRegistry = defineUploadRegistry({
 
 #### `src/app/api/upload/request/route.ts`
 ```typescript
-import { createUploadRequestHandler } from "@axosecurity/universal-uploader/server";
+import { createUploadRequestHandler } from "@axosecurity/secure-next-upload/server";
 import { uploadRegistry } from "@/config/uploader";
 import { db } from "@/db";
 
@@ -216,7 +216,7 @@ export const POST = createUploadRequestHandler({
 
 #### `src/app/api/upload/confirm/route.ts`
 ```typescript
-import { createUploadConfirmHandler } from "@axosecurity/universal-uploader/server";
+import { createUploadConfirmHandler } from "@axosecurity/secure-next-upload/server";
 import { uploadRegistry } from "@/config/uploader";
 import { db } from "@/db";
 
@@ -242,7 +242,7 @@ export const POST = createUploadConfirmHandler({
 ```tsx
 "use client";
 
-import { useFileUpload } from "@axosecurity/universal-uploader/client";
+import { useFileUpload } from "@axosecurity/secure-next-upload/client";
 
 export function GalleryUpload() {
   const {
@@ -288,7 +288,7 @@ export function GalleryUpload() {
 ### 2. Multi-File Cloud Dropzone
 
 ```tsx
-import { FileDropzone } from "@axosecurity/universal-uploader/client";
+import { FileDropzone } from "@axosecurity/secure-next-upload/client";
 
 export function GallerySection() {
   return (
@@ -309,7 +309,7 @@ export function GallerySection() {
 ### 3. Circular Avatar Uploader
 
 ```tsx
-import { AvatarUploader } from "@axosecurity/universal-uploader/client";
+import { AvatarUploader } from "@axosecurity/secure-next-upload/client";
 
 export function ProfileHeader({ user }) {
   return (
@@ -329,7 +329,7 @@ export function ProfileHeader({ user }) {
 ### 4. Document & Attachment Vault
 
 ```tsx
-import { DocumentUploader } from "@axosecurity/universal-uploader/client";
+import { DocumentUploader } from "@axosecurity/secure-next-upload/client";
 
 export function AttachmentsList() {
   return (
@@ -426,14 +426,14 @@ Add this CORS configuration to your Cloudflare R2 or AWS S3 bucket:
 
 ## 👨‍💻 Author & Security Researcher Profile
 
-**Universal Secure File & Media Uploader** (`@axosecurity/universal-uploader`) is created, architected, and maintained by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
+**Secure Next Upload** (`@axosecurity/secure-next-upload`) is created, architected, and maintained by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
 
 * **Lead Security Researcher**: **[axosolaman](https://github.com/axosolaman)**
 * **GitHub Profile**: [@axosolaman](https://github.com/axosolaman)
 * **Organization**: [Axo Security (@axosecurity)](https://github.com/axosecurity)
 * **Core Expertise**: Web Application Security, Bug Bounty Research, Threat Modeling, Zero-Trust Cloud Architectures, and Defensive AppSec Engineering.
 
-> 💬 **Feedback & Security Audits**: If you are using `@axosecurity/universal-uploader` in your production stack, feel free to star the repo or connect directly on GitHub with **[axosolaman](https://github.com/axosolaman)**.
+> 💬 **Feedback & Security Audits**: If you are using `@axosecurity/secure-next-upload` in your production stack, feel free to star the repo or connect directly on GitHub with **[axosolaman](https://github.com/axosolaman)**.
 
 ---
 

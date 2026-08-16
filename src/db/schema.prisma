@@ -1,4 +1,4 @@
-// Drop-in Prisma Schema Models for Universal Uploader
+// Drop-in Prisma Schema Models for Secure Next Upload
 
 model UploadIntent {
   id                    String    @id @default(uuid())

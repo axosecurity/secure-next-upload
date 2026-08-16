@@ -1,4 +1,4 @@
-# 🛡️ Defensive Security & Threat Model: Universal Uploader
+# 🛡️ Defensive Security & Threat Model: Secure Next Upload
 
 [![Security Researcher: axosolaman](https://img.shields.io/badge/Security%20Researcher-axosolaman-blue.svg)](https://github.com/axosolaman)
 [![Research: Axo Security](https://img.shields.io/badge/Research-Axo%20Security-purple.svg)](https://github.com/axosecurity)
@@ -16,7 +16,7 @@
 3. [The Hidden Dangers of Server-Side EXIF Stripping](#3-the-hidden-dangers-of-server-side-exif-stripping)
 4. [5-Layer Defense-in-Depth Pipeline Architecture](#4-5-layer-defense-in-depth-pipeline-architecture)
 5. [End-to-End Sequence Diagram](#5-end-to-end-sequence-diagram)
-6. [Attacker Exploit Scenarios & How Universal Uploader Neutralizes Them](#6-attacker-exploit-scenarios--how-universal-uploader-neutralizes-them)
+6. [Attacker Exploit Scenarios & How Secure Next Upload Neutralizes Them](#6-attacker-exploit-scenarios--how-secure-next-upload-neutralizes-them)
 7. [Vulnerability Learning Resources & Research References](#7-vulnerability-learning-resources--research-references)
 8. [Reporting a Vulnerability](#8-reporting-a-vulnerability)
 9. [Author & Security Researcher Bio](#9-author--security-researcher-bio)
@@ -40,7 +40,7 @@ File upload endpoints are historically the **single most lucrative attack surfac
 
 ## 2. Master CWE Vulnerability Mitigation Matrix
 
-| CWE ID | Vulnerability Name | How Universal Uploader Neutralizes It | Severity / Impact | Bounty Payout Range |
+| CWE ID | Vulnerability Name | How Secure Next Upload Neutralizes It | Severity / Impact | Bounty Payout Range |
 | :--- | :--- | :--- | :--- | :--- |
 | **CWE-434** | **Unrestricted Upload of File with Dangerous Type** | Strict MIME whitelist + max size limits + **16-byte binary magic byte inspection** (PNG, JPEG, PDF, WEBP, AVIF, ZIP, etc.) + post-upload `HeadObject` verification + single-use cryptographic intent tokens. | **Critical → High** (Full RCE / Server Takeover) | **$3,000 – $30,000+** |
 | **CWE-646** | **Reliance on File Name or Extension of Externally-Supplied File** | Server generates an unpredictable random 7-character object key (e.g. `avatars/xK9_m2Q.webp`). **Never trusts client filenames or double extensions** (`.php.jpg`). Binary magic bytes dictate authenticity. | **High** (Webshell / Polyglot Bypass) | **$2,000 – $10,000** |
@@ -70,7 +70,7 @@ Many backend engineers attempt to sanitize image metadata on the server using CL
 
 ### 🏆 Why Client-Side Web Worker Stripping Wins
 
-| Architectural Dimension | Client-Side Web Worker (Universal Uploader) | Traditional Server-Side Processing |
+| Architectural Dimension | Client-Side Web Worker (Secure Next Upload) | Traditional Server-Side Processing |
 | :--- | :--- | :--- |
 | **Server Attack Surface** | **Zero** — Server never executes metadata parsing binaries | **Massive** — Server must execute complex C/Perl binaries |
 | **RCE Vulnerability Risk** | **None** — Browser sandbox isolates processing | **High** (History of ExifTool / ImageMagick CVEs) |
@@ -169,25 +169,25 @@ sequenceDiagram
 
 ---
 
-## 6. Attacker Exploit Scenarios & How Universal Uploader Neutralizes Them
+## 6. Attacker Exploit Scenarios & How Secure Next Upload Neutralizes Them
 
 ### Scenario A: The Polyglot Webshell Bypass
 * **Attacker Strategy**: Attacker renames `shell.php` to `shell.php.png` or injects PHP code into image comments, expecting the backend or web server to execute it.
-* **Universal Uploader Defense**:
+* **Secure Next Upload Defense**:
   1. The server generates an unpredictable random key (`avatars/9xK_m2Z.png`), destroying user file paths and extensions.
   2. The raw first 16 bytes are validated against `0x89 0x50 0x4E 0x47` binary signature.
   3. Files are stored on isolated Cloudflare R2 / AWS S3 storage buckets with no PHP execution engine.
 
 ### Scenario B: The Extension & MIME Spoof
 * **Attacker Strategy**: Attacker intercepts HTTP request and declares `Content-Type: image/jpeg` while sending an `.exe` or `.sh` script.
-* **Universal Uploader Defense**:
+* **Secure Next Upload Defense**:
   1. The server performs an S3 byte-range read (`Range: bytes=0-15`) on the uploaded object.
   2. Binary signatures for JPEG (`FF D8 FF`) fail verification.
   3. The server immediately issues `DeleteObject` to storage, updates intent status to `failed`, and logs the security incident.
 
 ### Scenario C: Intent Replay & Race Conditions
 * **Attacker Strategy**: Attacker attempts to reuse a valid `uploadIntentId` to confirm multiple uploads or swap another user's file.
-* **Universal Uploader Defense**:
+* **Secure Next Upload Defense**:
   1. Intent records are strictly bound to the authenticated `userId`.
   2. The status transition is atomic: only intents with `status == 'pending'` can be confirmed.
   3. Once confirmed, status transitions to `'completed'`. Subsequent requests return `409 Conflict`.
@@ -237,7 +237,7 @@ A curated collection of industry-standard security research, interactive labs, a
 
 ## 8. Reporting a Vulnerability
 
-Security is our top priority. If you discover a security vulnerability or potential bypass in `@axosecurity/universal-uploader`, please report it responsibly:
+Security is our top priority. If you discover a security vulnerability or potential bypass in `@axosecurity/secure-next-upload`, please report it responsibly:
 
 * **Email**: `security@axosecurity.com` (or reach out directly on GitHub to [@axosolaman](https://github.com/axosolaman))
 * Please include proof-of-concept steps, affected component versions, and exploit impact.
@@ -247,7 +247,7 @@ Security is our top priority. If you discover a security vulnerability or potent
 
 ## 9. Author & Security Researcher Bio
 
-**Universal Secure File & Media Uploader** is architected and maintained by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
+**Secure Next Upload** is architected and maintained by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
 
 * **Lead Security Researcher**: **[axosolaman](https://github.com/axosolaman)**
 * **GitHub**: [@axosolaman](https://github.com/axosolaman)

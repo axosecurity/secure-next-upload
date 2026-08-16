@@ -1,5 +1,5 @@
 /**
- * @axosecurity/universal-uploader/server
+ * @axosecurity/secure-next-upload/server
  * Server-side route handlers, 5-layer security verification, and S3/R2 storage engine.
  * 
  * @author axosolaman (Axo Security)

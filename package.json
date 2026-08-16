@@ -1,7 +1,7 @@
 {
-  "name": "@axosecurity/universal-uploader",
+  "name": "@axosecurity/secure-next-upload",
   "version": "1.1.0",
-  "description": "Production-grade, zero-server-bandwidth universal multi-entity file and media upload system with 5-layer security verification for Next.js and modern web apps.",
+  "description": "Production-grade, zero-server-bandwidth secure multi-entity file and media upload system with 5-layer security verification for Next.js and modern web apps.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -37,6 +37,7 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
+    "secure-next-upload",
     "axosolaman",
     "axo-security",
     "security-researcher",
@@ -60,11 +61,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/axosecurity/universal-uploader.git"
+    "url": "git+https://github.com/axosecurity/secure-next-upload.git"
   },
-  "homepage": "https://github.com/axosecurity/universal-uploader#readme",
+  "homepage": "https://github.com/axosecurity/secure-next-upload#readme",
   "bugs": {
-    "url": "https://github.com/axosecurity/universal-uploader/issues"
+    "url": "https://github.com/axosecurity/secure-next-upload/issues"
   },
   "license": "MIT",
   "peerDependencies": {
