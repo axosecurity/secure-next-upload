@@ -451,53 +451,60 @@
             <tr>
               <th class="p-4">Feature</th>
               <th class="p-4 text-cyan-400 font-bold">Secure Next Upload</th>
+              <th class="p-4 text-amber-400 font-semibold">next-upload (TimMikeladze)</th>
               <th class="p-4">UploadThing</th>
-              <th class="p-4">Multer / Server</th>
-              <th class="p-4">Cloudinary</th>
+              <th class="p-4">Multer / Server Uploads</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-800/60">
+          <tbody class="divide-y divide-slate-800/60 font-sans">
             <tr class="hover:bg-slate-900/40 transition-colors">
               <td class="p-4 font-semibold text-white">Server Bandwidth</td>
-              <td class="p-4 font-bold text-emerald-400">Zero (Direct PUT)</td>
-              <td class="p-4 text-slate-400">Zero (Direct)</td>
-              <td class="p-4 text-red-400">❌ High (Full payload)</td>
-              <td class="p-4 text-slate-400">Zero (Direct)</td>
+              <td class="p-4 font-bold text-emerald-400">✅ Zero (Direct PUT)</td>
+              <td class="p-4 text-slate-300">✅ Zero (Presigned)</td>
+              <td class="p-4 text-slate-300">✅ Zero (Direct)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ High (Full payload buffers)</td>
             </tr>
             <tr class="hover:bg-slate-900/40 transition-colors">
-              <td class="p-4 font-semibold text-white">Storage Ownership</td>
-              <td class="p-4 font-bold text-emerald-400">✅ 100% Self-Hosted (S3/R2)</td>
-              <td class="p-4 text-red-400">❌ Locked to Infra</td>
-              <td class="p-4 text-slate-400">✅ Yes</td>
-              <td class="p-4 text-red-400">❌ Proprietary Cloud</td>
+              <td class="p-4 font-semibold text-white">16-Byte Magic Byte Check</td>
+              <td class="p-4 font-bold text-emerald-400">✅ Built-in (S3 Range: 0-15)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ None (MIME header only)</td>
+              <td class="p-4 text-amber-400 font-medium">⚠️ Basic verification</td>
+              <td class="p-4 text-amber-400 font-medium">⚠️ Requires server buffer</td>
+            </tr>
+            <tr class="hover:bg-slate-900/40 transition-colors">
+              <td class="p-4 font-semibold text-white">Client Web Worker EXIF Stripping</td>
+              <td class="p-4 font-bold text-emerald-400">✅ Built-in (GPS & camera scrub)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ None (Raw unstripped files)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ None (Manual)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ None</td>
             </tr>
             <tr class="hover:bg-slate-900/40 transition-colors">
               <td class="p-4 font-semibold text-white">Parallel Concurrency Pool</td>
-              <td class="p-4 font-bold text-emerald-400">✅ Built-in (3x–5x speed)</td>
-              <td class="p-4 text-amber-400">⚠️ Basic</td>
-              <td class="p-4 text-red-400">❌ Manual</td>
-              <td class="p-4 text-amber-400">⚠️ Basic</td>
+              <td class="p-4 font-bold text-emerald-400">✅ Built-in (concurrency: 3-5)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ Sequential / Manual</td>
+              <td class="p-4 text-amber-400 font-medium">⚠️ Basic queue</td>
+              <td class="p-4 text-rose-400 font-medium">❌ Manual implementation</td>
             </tr>
             <tr class="hover:bg-slate-900/40 transition-colors">
-              <td class="p-4 font-semibold text-white">Client Web Worker EXIF Strip</td>
-              <td class="p-4 font-bold text-emerald-400">✅ Built-in</td>
-              <td class="p-4 text-red-400">❌ None</td>
-              <td class="p-4 text-red-400">❌ None</td>
-              <td class="p-4 text-amber-400">⚠️ Server-side</td>
+              <td class="p-4 font-semibold text-white">Atomic Replacement (Avatar swap)</td>
+              <td class="p-4 font-bold text-emerald-400">✅ Built-in (Auto-prunes old file)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ Manual (Orphan storage bloat)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ Manual</td>
+              <td class="p-4 text-rose-400 font-medium">❌ Manual</td>
             </tr>
             <tr class="hover:bg-slate-900/40 transition-colors">
-              <td class="p-4 font-semibold text-white">16-Byte Magic Byte Inspection</td>
-              <td class="p-4 font-bold text-emerald-400">✅ S3 Byte-Range</td>
-              <td class="p-4 text-amber-400">⚠️ Basic</td>
-              <td class="p-4 text-amber-400">⚠️ Requires buffer</td>
-              <td class="p-4 text-slate-400">⚠️ In-flight</td>
+              <td class="p-4 font-semibold text-white">Multi-Entity Registry</td>
+              <td class="p-4 font-bold text-emerald-400">✅ Built-in (Type-Safe Registry)</td>
+              <td class="p-4 text-rose-400 font-medium">❌ Single upload endpoint</td>
+              <td class="p-4 text-emerald-400 font-medium">✅ FileRouter</td>
+              <td class="p-4 text-rose-400 font-medium">❌ Custom middleware boilerplates</td>
             </tr>
             <tr class="hover:bg-slate-900/40 transition-colors">
-              <td class="p-4 font-semibold text-white">Cost & Lock-in</td>
-              <td class="p-4 font-bold text-emerald-400">💸 $0 Markup (S3 Only)</td>
-              <td class="p-4 text-slate-400">💳 Monthly SaaS Tier</td>
-              <td class="p-4 text-slate-400">💸 High Server Costs</td>
-              <td class="p-4 text-slate-400">💳 High SaaS Pricing</td>
+              <td class="p-4 font-semibold text-white">Data Ownership & Pricing</td>
+              <td class="p-4 font-bold text-emerald-400">💸 100% Self-Hosted ($0 lock-in)</td>
+              <td class="p-4 text-emerald-400 font-medium">💸 100% Self-Hosted (S3/R2)</td>
+              <td class="p-4 text-amber-400 font-medium">💳 Monthly SaaS Tier</td>
+              <td class="p-4 text-rose-400 font-medium">💸 High Server & Bandwidth Costs</td>
             </tr>
           </tbody>
         </table>
