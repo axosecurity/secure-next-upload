@@ -37,20 +37,35 @@
     "prepublishOnly": "npm run build"
   },
   "keywords": [
+    "axosolaman",
+    "axo-security",
+    "security-researcher",
     "file-upload",
     "avatar-upload",
+    "cwe-434",
+    "magic-bytes",
     "s3",
     "cloudflare-r2",
     "presigned-url",
     "zero-bandwidth",
-    "magic-bytes",
-    "security",
+    "exif-stripper",
     "nextjs",
     "react",
     "drizzle",
     "prisma"
   ],
-  "author": "axosolaman (Axo Security)",
+  "author": {
+    "name": "axosolaman",
+    "url": "https://github.com/axosolaman"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axosecurity/universal-uploader.git"
+  },
+  "homepage": "https://github.com/axosecurity/universal-uploader#readme",
+  "bugs": {
+    "url": "https://github.com/axosecurity/universal-uploader/issues"
+  },
   "license": "MIT",
   "peerDependencies": {
     "next": "^14.0.0 || ^15.0.0",

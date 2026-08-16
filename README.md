@@ -1,6 +1,8 @@
 # 🛡️ Universal Secure File & Media Uploader (`@axosecurity/universal-uploader`)
 
 [![npm version](https://img.shields.io/npm/v/@axosecurity/universal-uploader.svg)](https://www.npmjs.com/package/@axosecurity/universal-uploader)
+[![Security Researcher: axosolaman](https://img.shields.io/badge/Security%20Researcher-axosolaman-blue.svg)](https://github.com/axosolaman)
+[![Research: Axo Security](https://img.shields.io/badge/Research-Axo%20Security-purple.svg)](https://github.com/axosecurity)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![CWE-434 Mitigated](https://img.shields.io/badge/CWE--434-Immune-brightgreen.svg)]()
 [![Zero Server Bandwidth](https://img.shields.io/badge/Bandwidth-0%20Server%20Load-brightgreen.svg)]()
@@ -608,14 +610,20 @@ export async function runCron() {
 
 ---
 
-## 👨‍💻 Author & Security Research
+## 👨‍💻 Author & Security Researcher Profile
 
-Built with defensive security engineering and research by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
-* **Specialization**: Web Application Security, Bug Bounty Research, Zero-Trust Cloud Architectures, and Proactive Vulnerability Mitigation.
-* **Mission**: Eliminating high-risk file upload attack vectors from modern production codebases.
+**Universal Secure File & Media Uploader** (`@axosecurity/universal-uploader`) is created, architected, and maintained by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
+
+* **Lead Security Researcher**: **[axosolaman](https://github.com/axosolaman)**
+* **GitHub Profile**: [@axosolaman](https://github.com/axosolaman)
+* **Organization**: [Axo Security (@axosecurity)](https://github.com/axosecurity)
+* **Core Expertise**: Web Application Security, Bug Bounty Research, Threat Modeling, Zero-Trust Cloud Architectures, and Defensive AppSec Engineering.
+* **Research Focus**: Eliminating high-severity RCE, SSRF, Path Traversal, and CWE-434 File Upload vulnerabilities across modern full-stack web frameworks.
+
+> 💬 **Feedback & Security Audits**: If you're using `@axosecurity/universal-uploader` in your production stack or need guidance on hardened cloud storage architectures, feel free to star the repo, open an issue, or connect directly on GitHub with **[axosolaman](https://github.com/axosolaman)**.
 
 ---
 
 ## 🛡️ License
 
-MIT License © 2026 Axo Security. Open source for commercial and enterprise production use.
+MIT License © 2026 axosolaman (Axo Security). Open source for commercial and enterprise production use.
