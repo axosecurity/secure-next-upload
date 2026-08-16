@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Defensive Security & Threat Model — Secure Next Upload</title>
+  <meta name="description" content="Master CWE vulnerability mitigation matrix, bug bounty economic analysis, server-side EXIF CVE breakdowns (CVE-2021-22204), and 5-layer upload defense architecture by security researcher axosolaman.">
+  <meta name="keywords" content="secure-next-upload, axosolaman, axo security, cwe-434, exiftool rce cve-2021-22204, file upload threat model, bug bounty file upload">
+  <meta name="author" content="axosolaman (Axo Security)">
+  
+  <!-- OpenGraph / Social Media -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://secure-next-upload.axosolaman.online/security.html">
+  <meta property="og:title" content="Defensive Security & Threat Model: Secure Next Upload">
+  <meta property="og:description" content="Technical deep-dive into file upload vulnerability mechanics, bug bounty economics, CWE mitigations, and defensive cloud engineering.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            cyber: {
+              bg: '#080b11',
+              card: '#0e131f',
+              border: '#1e293b',
+              cyan: '#06b6d4',
+              emerald: '#10b981',
+              purple: '#8b5cf6',
+              red: '#ef4444',
+            }
+          },
+          animation: {
+            'glow-pulse': 'glowPulse 4s ease-in-out infinite',
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            glowPulse: {
+              '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+              '50%': { opacity: '0.8', transform: 'scale(1.05)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #070a10;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+    
+    .bg-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+    
+    .glass-card {
+      background: rgba(14, 19, 31, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .glass-card:hover {
+      border-color: rgba(6, 182, 212, 0.3);
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .code-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .code-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-grid antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- Ambient Glow Orbs -->
+  <div class="fixed top-0 left-1/4 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[140px] pointer-events-none -z-10 animate-glow-pulse"></div>
+  <div class="fixed top-1/2 right-10 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[140px] pointer-events-none -z-10 animate-glow-pulse" style="animation-delay: 2s;"></div>
+
+  <!-- Navbar -->
+  <nav class="sticky top-0 z-50 glass-card border-b border-slate-800/80 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 font-black text-xl hover:scale-105 transition-transform">
+          🛡️
+        </a>
+        <div>
+          <a href="index.html" class="text-base font-bold tracking-tight text-white flex items-center gap-2">
+            SecureNextUpload
+            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">Security Paper</span>
+          </a>
+          <p class="text-[11px] text-slate-400">Authored by <span class="text-cyan-300 font-medium">axosolaman</span> (Axo Security)</p>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+        <a href="index.html" class="hover:text-cyan-400 transition-colors">← Main Website</a>
+        <a href="#threat-landscape" class="hover:text-cyan-400 transition-colors">Threat Stats</a>
+        <a href="#cwe-matrix" class="hover:text-cyan-400 transition-colors">CWE Matrix</a>
+        <a href="#exif-risks" class="hover:text-cyan-400 transition-colors">Server-Side EXIF Risks</a>
+        <a href="#pipeline" class="hover:text-cyan-400 transition-colors">5-Layer Pipeline</a>
+        <a href="#learning-resources" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold">Labs & Resources 📚</a>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/axosecurity/secure-next-upload" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-all shadow-sm">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Header -->
+  <header class="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
+    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card border border-purple-500/30 text-purple-300 text-xs font-mono mb-6">
+      <span>🛡️ DEFENSIVE SECURITY RESEARCH & THREAT MODEL</span>
+    </div>
+
+    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+      File Upload Threat Architecture & <br>
+      <span class="gradient-text">Master Mitigation Blueprint</span>
+    </h1>
+
+    <p class="mt-5 text-slate-300 text-base max-w-2xl mx-auto leading-relaxed">
+      A technical breakdown of file upload vulnerability mechanics, bug bounty economics, CWE mitigation mappings, defensive cloud storage engineering, and curated learning references.
+    </p>
+
+    <!-- Metadata Author Banner -->
+    <div class="mt-8 flex flex-wrap items-center justify-center gap-4 text-xs font-mono text-slate-400">
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800">
+        <span class="text-cyan-400 font-bold">Researcher:</span>
+        <a href="https://github.com/axosolaman" target="_blank" class="text-white hover:underline">axosolaman</a>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800">
+        <span class="text-purple-400 font-bold">Research Group:</span>
+        <a href="https://github.com/axosecurity" target="_blank" class="text-white hover:underline">Axo Security</a>
+      </div>
+      <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900/80 border border-slate-800">
+        <span class="text-emerald-400 font-bold">Coverage:</span>
+        <span class="text-slate-200">5-Layer Zero-Bandwidth</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 space-y-20">
+
+    <!-- Section 1: Threat Landscape & Bug Bounty Economics -->
+    <section id="threat-landscape" class="scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-bold text-sm">1</span>
+        <h2 class="text-2xl font-bold text-white">The Real-World Threat Landscape & Bug Bounty Economics</h2>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <p class="text-sm text-slate-300 leading-relaxed">
+          File upload endpoints are historically the <strong class="text-white font-semibold">single most lucrative attack surface</strong> across bug bounty platforms like <strong class="text-cyan-400 font-semibold">HackerOne, Bugcrowd, and Intigriti</strong>. Naive implementations (e.g. standard multer, basic presigned URLs without byte inspection, or file-extension-only checks) regularly lead to catastrophic breaches.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+            <h3 class="text-xs font-mono text-cyan-400 uppercase font-bold mb-2">Public Bug Bounty Data</h3>
+            <ul class="text-xs text-slate-300 space-y-2">
+              <li>• <strong class="text-white">CWE-434 (Unrestricted Upload)</strong>: Over <span class="text-cyan-300 font-mono font-bold">2,220+ unique disclosed reports</span> on HackerOne.</li>
+              <li>• <strong class="text-white">Chained Vulnerabilities</strong>: Path Traversal (CWE-22), Input Validation (CWE-20), and Stored XSS account for thousands more findings.</li>
+            </ul>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-800">
+            <h3 class="text-xs font-mono text-emerald-400 uppercase font-bold mb-2">Typical Bug Bounty Payouts</h3>
+            <ul class="text-xs text-slate-300 space-y-1.5 font-mono">
+              <li class="flex justify-between"><span>MIME Spoof / Extension Bypass:</span> <span class="text-emerald-400 font-bold">$500 – $3,000</span></li>
+              <li class="flex justify-between"><span>Stored XSS / EXIF GPS Leak:</span> <span class="text-emerald-400 font-bold">$1,000 – $5,000</span></li>
+              <li class="flex justify-between"><span>Path Traversal File Write:</span> <span class="text-emerald-400 font-bold">$3,000 – $15,000</span></li>
+              <li class="flex justify-between"><span>Server Parser Exploit / RCE:</span> <span class="text-emerald-400 font-bold">$3,000 – $30,000+</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Master CWE Mitigation Matrix -->
+    <section id="cwe-matrix" class="scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-bold text-sm">2</span>
+        <h2 class="text-2xl font-bold text-white">Master CWE Vulnerability Mitigation Matrix</h2>
+      </div>
+
+      <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900/90 text-[11px] uppercase font-mono text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="p-4">CWE ID</th>
+                <th class="p-4">Vulnerability Name</th>
+                <th class="p-4">Defensive Mitigation in Secure Next Upload</th>
+                <th class="p-4">Severity</th>
+                <th class="p-4">Bounty Range</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-sans">
+              <tr class="hover:bg-slate-900/40 transition-colors">
+                <td class="p-4 font-mono text-cyan-400 font-bold">CWE-434</td>
+                <td class="p-4 font-semibold text-white">Unrestricted Upload of Dangerous Type</td>
+                <td class="p-4 text-slate-400">Strict MIME whitelist + max size + <strong>16-byte binary magic byte inspection</strong> (PNG, JPEG, PDF, WEBP, AVIF, ZIP) + post-upload HeadObject check.</td>
+                <td class="p-4"><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-mono text-[10px]">CRITICAL</span></td>
+                <td class="p-4 font-mono text-emerald-400">$3k – $30k+</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40 transition-colors">
+                <td class="p-4 font-mono text-cyan-400 font-bold">CWE-646</td>
+                <td class="p-4 font-semibold text-white">Reliance on Supplied Filename / Extension</td>
+                <td class="p-4 text-slate-400">Server generates unpredictable random 7-character object key (<code class="text-cyan-300 font-mono">avatars/xK9_m2Q.webp</code>). Never trusts client filenames or double extensions (<code class="text-slate-300 font-mono">.php.jpg</code>).</td>
+                <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">HIGH</span></td>
+                <td class="p-4 font-mono text-emerald-400">$2k – $10k</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40 transition-colors">
+                <td class="p-4 font-mono text-cyan-400 font-bold">CWE-20</td>
+                <td class="p-4 font-semibold text-white">Improper Input Validation</td>
+                <td class="p-4 text-slate-400">5-layer defense-in-depth pipeline (Client validation → Presigned URL constraints → Metadata check → S3 Byte-Range scan → Atomic commit).</td>
+                <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">HIGH</span></td>
+                <td class="p-4 font-mono text-emerald-400">$1k – $5k</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40 transition-colors">
+                <td class="p-4 font-mono text-cyan-400 font-bold">CWE-22 / 73</td>
+                <td class="p-4 font-semibold text-white">Path Traversal / External Path Control</td>
+                <td class="p-4 text-slate-400">Strict isolated storage folders, randomized server keys, zero user-controlled file paths, and atomic replacement garbage collection.</td>
+                <td class="p-4"><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-mono text-[10px]">CRITICAL</span></td>
+                <td class="p-4 font-mono text-emerald-400">$3k – $15k</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40 transition-colors">
+                <td class="p-4 font-mono text-cyan-400 font-bold">CWE-200 / 359</td>
+                <td class="p-4 font-semibold text-white">EXIF / GPS Location Data Exposure</td>
+                <td class="p-4 text-slate-400">Client-side Web Worker automatically strips all EXIF metadata and GPS coordinates in memory before upload token request.</td>
+                <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">HIGH</span></td>
+                <td class="p-4 font-mono text-emerald-400">$1k – $5k</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40 transition-colors">
+                <td class="p-4 font-mono text-cyan-400 font-bold">CWE-400</td>
+                <td class="p-4 font-semibold text-white">Uncontrolled Resource Consumption (DoS)</td>
+                <td class="p-4 text-slate-400">Per-entity size limits + token-bucket rate limiting + Zero Server Bandwidth direct-to-S3/R2 streaming.</td>
+                <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">HIGH</span></td>
+                <td class="p-4 font-mono text-emerald-400">$500 – $3k</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40 transition-colors">
+                <td class="p-4 font-mono text-cyan-400 font-bold">CWE-862</td>
+                <td class="p-4 font-semibold text-white">Missing Authorization</td>
+                <td class="p-4 text-slate-400">Per-entity <code class="text-cyan-300 font-mono">requiresAuth</code> enforcement, cryptographic intent tokens bound to user session, and single-use state machines.</td>
+                <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">HIGH</span></td>
+                <td class="p-4 font-mono text-emerald-400">$1.5k – $6k</td>
+              </tr>
+              <tr class="hover:bg-slate-900/40 transition-colors">
+                <td class="p-4 font-mono text-cyan-400 font-bold">CWE-79</td>
+                <td class="p-4 font-semibold text-white">Stored XSS via File Upload</td>
+                <td class="p-4 text-slate-400">SVGs and HTML payloads are sanitized and rejected unless explicitly permitted in isolated sandboxed entity configurations.</td>
+                <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">HIGH</span></td>
+                <td class="p-4 font-mono text-emerald-400">$1k – $5k</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Hidden Dangers of Server-Side EXIF Stripping -->
+    <section id="exif-risks" class="scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-bold text-sm">3</span>
+        <h2 class="text-2xl font-bold text-white">The Hidden Dangers of Server-Side EXIF Stripping</h2>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-6">
+        <p class="text-sm text-slate-300 leading-relaxed">
+          Many backend engineers attempt to sanitize image metadata on the server using CLI utilities like <code class="text-cyan-300 font-mono">ExifTool</code>, <code class="text-cyan-300 font-mono">ImageMagick</code>, or native C-bindings. <strong class="text-rose-400 font-semibold">From an offensive security perspective, server-side EXIF processing introduces severe critical attack vectors:</strong>
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-900/90 text-[11px] uppercase font-mono text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="p-3">Risk Type</th>
+                <th class="p-3">Description & Real-World CVE Exploits</th>
+                <th class="p-3">Severity</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60">
+              <tr>
+                <td class="p-3 font-semibold text-rose-400">Command Injection / RCE</td>
+                <td class="p-3 text-slate-300 leading-relaxed">
+                  Backend servers invoke binaries (<code class="text-cyan-300 font-mono">ExifTool</code>, <code class="text-cyan-300 font-mono">ImageMagick</code>) on untrusted files. Crafted metadata payloads, filename pipes, or parser format bugs execute arbitrary OS commands.<br>
+                  • <strong class="text-white">CVE-2021-22204</strong> (ExifTool DjVu parser) ➔ Led directly to <strong class="text-rose-300">CVE-2021-22205 (GitLab unauthenticated pre-auth RCE)</strong>.<br>
+                  • Multiple ExifTool command injections via <code class="text-slate-300 font-mono">DateTimeOriginal</code> and pipe injection.
+                </td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-mono text-[10px]">CRITICAL (CVSS 10.0)</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-amber-400">Parser & Memory Corruption</td>
+                <td class="p-3 text-slate-300 leading-relaxed">
+                  C/C++ image parsing libraries have a decades-long history of buffer overflows and integer underflows when unpacking corrupted EXIF chunks in <code class="text-slate-300 font-mono">libexif</code>, <code class="text-slate-300 font-mono">ImageMagick</code>, and <code class="text-slate-300 font-mono">FFmpeg</code> decoders.
+                </td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-mono text-[10px]">HIGH</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-purple-400">SSRF / Arbitrary File Read</td>
+                <td class="p-3 text-slate-300 leading-relaxed">
+                  Legacy image processors parse indirect metadata delegates (e.g. SVG internal XML entities or MSL scripts), forcing backend servers to leak internal endpoints or dump local <code class="text-slate-300 font-mono">/etc/passwd</code> files (Classic <strong>ImageTragick CVE-2016-3714</strong>).
+                </td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">HIGH</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold text-cyan-400">Privacy Leak During Transit</td>
+                <td class="p-3 text-slate-300 leading-relaxed">
+                  When EXIF stripping is done on the server, the raw unstripped file (containing high-precision GPS coordinates and home address metadata) is transmitted across the wire and written to temporary server disks before sanitization.
+                </td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono text-[10px]">HIGH (GDPR)</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-xs text-emerald-300">
+          <strong class="font-bold text-white">🏆 Why Client-Side Web Worker Stripping Wins:</strong> By performing image resizing and EXIF metadata scrubbing in the client's browser Web Worker, the backend server attack surface is reduced to <strong>Zero</strong>. The server never executes metadata parsing binaries.
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 4: 5-Layer Defense Architecture Pipeline -->
+    <section id="pipeline" class="scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-bold text-sm">4</span>
+        <h2 class="text-2xl font-bold text-white">5-Layer Defense-in-Depth Pipeline Architecture</h2>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-4">
+        <div class="space-y-3 font-mono text-xs">
+          <div class="p-3 rounded-lg bg-slate-900/90 border-l-4 border-cyan-400 flex items-start gap-3">
+            <span class="text-cyan-400 font-bold">Layer 1:</span>
+            <div class="text-slate-300">
+              <strong class="text-white">Pre-flight Client Validation & Web Worker Processing</strong>
+              <p class="text-slate-400 text-[11px] mt-0.5">Resizes image, strips EXIF (GPS/camera metadata), compresses file in Web Worker before network transmission.</p>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-lg bg-slate-900/90 border-l-4 border-purple-400 flex items-start gap-3">
+            <span class="text-purple-400 font-bold">Layer 2:</span>
+            <div class="text-slate-300">
+              <strong class="text-white">Cryptographic Presigned PUT URL Token Issuance</strong>
+              <p class="text-slate-400 text-[11px] mt-0.5">Token-bucket rate limiting check + 60s short-lived Presigned PUT URL locked strictly to Content-Type & Length + random 7-char key.</p>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-lg bg-emerald-950/30 border-l-4 border-emerald-400 flex items-start gap-3">
+            <span class="text-emerald-400 font-bold">Direct PUT:</span>
+            <div class="text-slate-300">
+              <strong class="text-white">Direct Browser-to-Cloud PUT (0 Server Bandwidth Consumed)</strong>
+              <p class="text-emerald-300/80 text-[11px] mt-0.5">Direct payload transmission to Cloudflare R2 / AWS S3 storage buckets.</p>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-lg bg-slate-900/90 border-l-4 border-amber-400 flex items-start gap-3">
+            <span class="text-amber-400 font-bold">Layer 3:</span>
+            <div class="text-slate-300">
+              <strong class="text-white">Post-Upload Storage HeadObject Verification</strong>
+              <p class="text-slate-400 text-[11px] mt-0.5">Server queries S3 HeadObject metadata to confirm actual byte length and Content-Type match intent within strict tolerance.</p>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-lg bg-slate-900/90 border-l-4 border-rose-400 flex items-start gap-3">
+            <span class="text-rose-400 font-bold">Layer 4:</span>
+            <div class="text-slate-300">
+              <strong class="text-white">16-Byte Magic Byte Binary Signature Inspection</strong>
+              <p class="text-slate-400 text-[11px] mt-0.5">Fetches first 16 bytes via S3 byte-range request (Range: bytes=0-15). If signature is spoofed, object is instantly purged from S3.</p>
+            </div>
+          </div>
+
+          <div class="p-3 rounded-lg bg-slate-900/90 border-l-4 border-cyan-400 flex items-start gap-3">
+            <span class="text-cyan-400 font-bold">Layer 5:</span>
+            <div class="text-slate-300">
+              <strong class="text-white">Single-Use State Machine & Atomic Replacement</strong>
+              <p class="text-slate-400 text-[11px] mt-0.5">Updates intent to 'completed', prunes old avatar if swapMode == 'atomic_replace', and emits finalized secure public CDN URL.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 5: Attacker Exploit Scenarios -->
+    <section id="exploit-scenarios" class="scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-bold text-sm">5</span>
+        <h2 class="text-2xl font-bold text-white">Attacker Exploit Scenarios & Defensive Neutralization</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="glass-card p-5 rounded-xl border border-slate-800">
+          <span class="text-[10px] font-mono uppercase text-red-400 font-bold">Scenario A</span>
+          <h3 class="text-sm font-bold text-white mt-1">Polyglot File Bypass</h3>
+          <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+            <strong class="text-slate-300">Attacker Strategy:</strong> Attacker renames malicious file to <code class="text-slate-300 font-mono">payload.php.png</code> or embeds script comments into image structures.
+          </p>
+          <div class="mt-3 p-2.5 rounded bg-black/40 border border-slate-800 text-[11px] text-cyan-300">
+            <strong>Defense:</strong> Server generates random key (<code class="font-mono text-white">avatars/xK9.png</code>), verifies 16-byte magic header, and stores on isolated S3/R2 without CGI execution.
+          </div>
+        </div>
+
+        <div class="glass-card p-5 rounded-xl border border-slate-800">
+          <span class="text-[10px] font-mono uppercase text-amber-400 font-bold">Scenario B</span>
+          <h3 class="text-sm font-bold text-white mt-1">Extension & MIME Spoof</h3>
+          <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+            <strong class="text-slate-300">Attacker Strategy:</strong> Attacker declares <code class="text-slate-300 font-mono">Content-Type: image/jpeg</code> via curl while uploading an executable or malware payload.
+          </p>
+          <div class="mt-3 p-2.5 rounded bg-black/40 border border-slate-800 text-[11px] text-cyan-300">
+            <strong>Defense:</strong> S3 Byte-Range read inspects binary magic bytes. Signature mismatch triggers immediate <code class="font-mono text-white">DeleteObject</code> from cloud storage.
+          </div>
+        </div>
+
+        <div class="glass-card p-5 rounded-xl border border-slate-800">
+          <span class="text-[10px] font-mono uppercase text-purple-400 font-bold">Scenario C</span>
+          <h3 class="text-sm font-bold text-white mt-1">Intent Replay & Race</h3>
+          <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+            <strong class="text-slate-300">Attacker Strategy:</strong> Attacker attempts to reuse a valid <code class="text-slate-300 font-mono">uploadIntentId</code> to confirm multiple uploads or overwrite another user's file.
+          </p>
+          <div class="mt-3 p-2.5 rounded bg-black/40 border border-slate-800 text-[11px] text-cyan-300">
+            <strong>Defense:</strong> Intents are bound to the authenticated user. Status transitions from <code class="font-mono text-white">'pending'</code> to <code class="font-mono text-white">'completed'</code> atomically (409 Conflict on replay).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: Curated Learning Resources & Research References -->
+    <section id="learning-resources" class="scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <span class="w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center font-bold text-sm">6</span>
+        <h2 class="text-2xl font-bold text-white">📚 Vulnerability Learning Resources & Research References</h2>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 sm:p-8 space-y-8 border border-purple-500/20">
+        <p class="text-xs text-slate-300 leading-relaxed">
+          A curated collection of industry-standard security research, interactive training labs, and exploit walkthroughs mapped to each vulnerability class:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Category 1 -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-mono uppercase font-bold text-cyan-400 flex items-center gap-1.5">
+              <span>1.</span> Unrestricted File Upload (CWE-434)
+            </h3>
+            <ul class="text-xs space-y-2 text-slate-300">
+              <li>• <a href="https://portswigger.net/web-security/file-upload" target="_blank" class="text-cyan-300 hover:underline font-medium">PortSwigger Web Security Academy: File Upload Labs ↗</a></li>
+              <li>• <a href="https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload" target="_blank" class="text-slate-300 hover:text-white hover:underline">OWASP Unrestricted File Upload Guide ↗</a></li>
+              <li>• <a href="https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html" target="_blank" class="text-slate-300 hover:text-white hover:underline">OWASP File Upload Cheat Sheet ↗</a></li>
+              <li>• <a href="https://www.thehacker.recipes/web/inputs/unrestricted-file-upload" target="_blank" class="text-slate-300 hover:text-white hover:underline">The Hacker Recipes: Unrestricted File Upload ↗</a></li>
+              <li>• <a href="https://techearl.com/file-upload-vulnerabilities" target="_blank" class="text-slate-300 hover:text-white hover:underline">Techearl: File Upload Vulnerabilities Practitioner Guide ↗</a></li>
+              <li>• <a href="https://offensive360.com/knowledge-base/insecure-file-upload/" target="_blank" class="text-slate-300 hover:text-white hover:underline">Offensive360: Insecure File Upload Knowledge Base ↗</a></li>
+            </ul>
+          </div>
+
+          <!-- Category 2 -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-mono uppercase font-bold text-emerald-400 flex items-center gap-1.5">
+              <span>2.</span> Magic Bytes & Polyglot Bypasses
+            </h3>
+            <ul class="text-xs space-y-2 text-slate-300">
+              <li>• <a href="https://portswigger.net/web-security/file-upload" target="_blank" class="text-emerald-300 hover:underline font-medium">PortSwigger: Flawed File Type Validation Labs ↗</a></li>
+              <li>• <a href="https://www.intigriti.com/researchers/blog/hacking-tools/insecure-file-uploads-a-complete-guide-to-finding-advanced-file-upload-vulnerabilities" target="_blank" class="text-slate-300 hover:text-white hover:underline">Intigriti: Advanced Insecure File Upload Guide ↗</a></li>
+              <li>• <a href="https://bugbounty.info/Attack-Surface/Web/File-Operations/File-Upload" target="_blank" class="text-slate-300 hover:text-white hover:underline">Bug Bounty Playbook: File Operations ↗</a></li>
+              <li>• <a href="https://en.wikipedia.org/wiki/List_of_file_signatures" target="_blank" class="text-slate-300 hover:text-white hover:underline">Wikipedia: List of File Magic Signatures ↗</a></li>
+            </ul>
+          </div>
+
+          <!-- Category 3 -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-mono uppercase font-bold text-purple-400 flex items-center gap-1.5">
+              <span>3.</span> Server-Side EXIF Risks & CVEs
+            </h3>
+            <ul class="text-xs space-y-2 text-slate-300">
+              <li>• <a href="https://hackerone.com/reports/1154542" target="_blank" class="text-purple-300 hover:underline font-medium">HackerOne Report #1154542: GitLab ExifTool RCE (CVE-2021-22205) ↗</a></li>
+              <li>• <a href="https://blogs.blackberry.com/en/2021/06/from-fix-to-exploit-arbitrary-code-execution-for-cve-2021-22204-in-exiftool" target="_blank" class="text-slate-300 hover:text-white hover:underline">BlackBerry Threat Research: ExifTool DjVu Parser Exploitation ↗</a></li>
+              <li>• <a href="https://ine.com/blog/exiftool-command-injection-cve-2021-22204" target="_blank" class="text-slate-300 hover:text-white hover:underline">INE Security: GitLab ExifTool Command Injection Walkthrough ↗</a></li>
+              <li>• <a href="https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/multi/http/gitlab_exif_rce.rb" target="_blank" class="text-slate-300 hover:text-white hover:underline">Rapid7 Metasploit Module: GitLab ExifTool RCE ↗</a></li>
+            </ul>
+          </div>
+
+          <!-- Category 4 -->
+          <div class="space-y-3">
+            <h3 class="text-xs font-mono uppercase font-bold text-rose-400 flex items-center gap-1.5">
+              <span>4.</span> Testing Standards & MITRE References
+            </h3>
+            <ul class="text-xs space-y-2 text-slate-300">
+              <li>• <a href="https://portswigger.net/web-security/learning-paths/file-upload-vulnerabilities" target="_blank" class="text-rose-300 hover:underline font-medium">PortSwigger Learning Path: File Upload Vulnerabilities ↗</a></li>
+              <li>• <a href="https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/08-Test_Upload_of_Unexpected_File_Types" target="_blank" class="text-slate-300 hover:text-white hover:underline">OWASP WSTG: Test Upload of Unexpected File Types ↗</a></li>
+              <li>• <a href="https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/09-Test_Upload_of_Malicious_Files" target="_blank" class="text-slate-300 hover:text-white hover:underline">OWASP WSTG: Test Upload of Malicious Files ↗</a></li>
+              <li>• <a href="https://cwe.mitre.org/data/definitions/646.html" target="_blank" class="text-slate-300 hover:text-white hover:underline">MITRE CWE-646 (Reliance on Filename / Extension) ↗</a></li>
+              <li>• <a href="https://cwe.mitre.org/data/definitions/200.html" target="_blank" class="text-slate-300 hover:text-white hover:underline">MITRE CWE-200 (Exposure of Sensitive Information) ↗</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 7: Reporting Vulnerabilities & Researcher Profile -->
+    <section id="reporting" class="scroll-mt-24">
+      <div class="glass-card rounded-2xl p-8 border border-cyan-500/20 text-center relative overflow-hidden">
+        <h3 class="text-xl font-bold text-white">Responsible Vulnerability Disclosure</h3>
+        <p class="text-xs text-slate-300 max-w-xl mx-auto mt-3 leading-relaxed">
+          If you discover a security vulnerability or potential bypass in <code class="text-cyan-300 font-mono">@axosolaman/secure-next-upload</code>, please report it directly for coordinated remediation:
+        </p>
+
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-4">
+          <a href="mailto:security@axosecurity.com" class="px-5 py-2.5 text-xs font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-all font-mono">
+            ✉️ security@axosecurity.com
+          </a>
+          <a href="https://github.com/axosolaman" target="_blank" class="px-5 py-2.5 text-xs font-semibold text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg transition-all">
+            GitHub: @axosolaman
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/80 py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center text-xs text-slate-500">
+    <div class="flex flex-wrap items-center justify-center gap-6 mb-4 text-slate-400">
+      <a href="index.html" class="hover:text-white">Main Website</a>
+      <a href="index.html#simulator" class="hover:text-white">Sandbox Simulator</a>
+      <a href="#threat-landscape" class="hover:text-white">Threat Stats</a>
+      <a href="#cwe-matrix" class="hover:text-white">CWE Matrix</a>
+      <a href="#learning-resources" class="hover:text-white">Learning Resources</a>
+      <a href="https://www.npmjs.com/package/@axosolaman/secure-next-upload" target="_blank" class="hover:text-white">npm Package</a>
+    </div>
+    <p>MIT License © 2026 axosolaman (Axo Security). Open source for commercial and enterprise production use.</p>
+    <p class="mt-1 font-mono text-[11px] text-slate-600">Hosted via GitHub Pages at <span class="text-slate-400">secure-next-upload.axosolaman.online</span></p>
+  </footer>
+
+</body>
+</html>
