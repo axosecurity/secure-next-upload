@@ -389,7 +389,7 @@
           <tbody class="divide-y divide-slate-800/60 font-sans">
             <tr class="hover:bg-slate-900/40 transition-colors">
               <td class="p-4 font-mono text-cyan-400 font-bold">CWE-434</td>
-              <td class="p-4 font-semibold text-white">Unrestricted File Upload (RCE)</td>
+              <td class="p-4 font-semibold text-white">Unrestricted File Upload</td>
               <td class="p-4 text-slate-400">16-byte magic byte scan + presigned token locks + post-upload HeadObject check</td>
               <td class="p-4"><span class="px-2 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20 font-mono text-[10px]">CRITICAL</span></td>
               <td class="p-4 font-mono text-emerald-400">$3k – $30k+</td>
@@ -797,7 +797,7 @@ model <span class="text-cyan-300">UploadIntent</span> {
         logTerminal("Layer 4 [Magic Bytes]: Inspecting first 16 bytes: '3C 3F 70 68 70 20 73 79 73 74 65 6D' (<?php system).", "error");
         logTerminal("🚨 SECURITY ALERT (CWE-434): Binary header signature does NOT match PNG signature (89 50 4E 47)!", "error");
         logTerminal("🛡️ IMMEDIATE PURGE: Object 'avatars/hAcK_991.png' deleted from S3 storage instantly.", "error");
-        logTerminal("🔒 Intent marked FAILED. Blocked potential RCE webshell execution.", "error");
+        logTerminal("🔒 Intent marked FAILED. Blocked unauthorized payload upload.", "error");
         setStepStatus(4, "error", "✗ MALICIOUS DETECTED");
         setStepStatus(5, "error", "✗ REJECTED");
       }

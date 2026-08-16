@@ -33,7 +33,7 @@ Traditional file upload architectures stream massive binary payloads directly th
 
 File upload endpoints are historically the most exploited attack surface on bug bounty platforms (**HackerOne, Bugcrowd, Intigriti**). Secure Next Upload provides defense-in-depth immunity against the most severe vulnerability classes:
 
-* 💥 **CWE-434 (Unrestricted File Upload / Webshell RCE)** ➔ **Neutralized** by server-side 16-byte binary magic byte inspection (`0x89PNG`, `%PDF`, `FF D8 FF`, `RIFF...WEBP`), strict MIME whitelisting, and cloud-edge content locks.
+* 💥 **CWE-434 (Unrestricted File Upload)** ➔ **Neutralized** by server-side 16-byte binary magic byte inspection (`0x89PNG`, `%PDF`, `FF D8 FF`, `RIFF...WEBP`), strict MIME whitelisting, and cloud-edge content locks.
 * 📍 **CWE-200 / CWE-359 (EXIF & GPS Geolocation Leakage)** ➔ **Neutralized** by in-memory browser Web Worker stripping before upload, protecting user privacy and preventing GDPR/HIPAA compliance fines.
 * 🛑 **CWE-22 / CWE-646 (Path Traversal & Filename Tampering)** ➔ **Neutralized** by generating unpredictable 7-character randomized object keys (`avatars/xK9_m2Q.webp`), completely discarding untrusted user filenames and path sequences.
 * 💣 **CWE-400 (Denial of Service & Serverless RAM Exhaustion)** ➔ **Neutralized** by routing binary streams directly to cloud storage, completely bypassing Node.js/Next.js memory buffers.
@@ -62,7 +62,7 @@ File upload endpoints are historically the most exploited attack surface on bug 
 | **Multi-File Upload Speed** | ⏱️ Sequential (30–45s for 10 files) | ⚡ **Parallel Pool (7–9s for 10 files)** |
 | **Cloud Storage Costs** | 💸 Uncompressed 15MB images fill buckets | 📉 **70%+ Savings** (Compressed in Web Worker) |
 | **Serverless Execution Limits** | 💥 Crashes on Vercel/Lambda (4.5MB limit) | ✅ **Unlimited File Sizes Supported** |
-| **Security Breach Risk** | 🚨 Critical (CWE-434 RCE webshell payouts) | 🛡️ **Hardened 5-Layer Verification** |
+| **Security Breach Risk** | 🚨 Critical (CWE-434 Unrestricted Uploads) | 🛡️ **Hardened 5-Layer Verification** |
 
 ---
 
@@ -98,7 +98,7 @@ If you build with or rely on traditional alternatives, your application remains 
 | Alternative Architecture / Pattern | Vulnerabilities & Security Risks Introduced | Real-World Impact on Your App |
 | :--- | :--- | :--- |
 | **Traditional Server Buffering (`Multer`, `Busboy`, raw API routes)** | **CWE-400 (Denial of Service / OOM Crashes)**<br>• Full binary payload buffers into server memory.<br>• Serverless functions (Vercel / AWS Lambda) crash instantly on 4.5MB limit.<br>• Heavy server CPU spikes and bandwidth saturation. | 💥 **Server Outages & Wasted Bandwidth**<br>Thousands in bloated cloud bills; memory crashes during concurrent traffic spikes. |
-| **Basic Presigned URLs (`next-upload`, DIY S3 scripts)** | **CWE-434 & CWE-646 (MIME & Extension Spoofing)**<br>• Lacks deep 16-byte binary magic byte inspection.<br>• Blindly trusts client-provided `Content-Type` headers.<br>• Polyglot webshells (`shell.php.png`) pass through to cloud storage. | 🚨 **Remote Code Execution (RCE) / Malware Hosting**<br>Attackers host phishing pages or executable malware directly on your CDN domain. |
+| **Basic Presigned URLs (`next-upload`, DIY S3 scripts)** | **CWE-434 & CWE-646 (MIME & Extension Spoofing)**<br>• Lacks deep 16-byte binary magic byte inspection.<br>• Blindly trusts client-provided `Content-Type` headers.<br>• Spoofed files pass through uninspected to cloud storage. | 🚨 **Malware Hosting & Phishing Delivery**<br>Attackers host phishing pages or executable malware directly on your CDN domain. |
 | **Server-Side EXIF Processing (`ExifTool`, `ImageMagick`)** | **Command Injection / SSRF / Memory Corruption**<br>• Backend server invokes CLI parsers on untrusted binary inputs.<br>• Exposes infrastructure to **CVE-2021-22204 (GitLab RCE)** and ImageTragick. | 💀 **Critical Server Takeover (CVSS 10.0)**<br>Attackers execute arbitrary shell commands inside your server environment. |
 | **Unstripped Raw Uploads (No Client Web Worker Stripping)** | **CWE-200 / CWE-359 (EXIF Geolocation Leakage)**<br>• Uploads unstripped camera photos to public storage buckets.<br>• Leaks precise GPS latitude/longitude, home addresses, device serials. | ⚖️ **User Doxxing & GDPR/HIPAA Fines**<br>Massive regulatory privacy violation penalties and permanent user trust destruction. |
 | **Client-Only Libraries without Intent States (`Uppy` alone)** | **CWE-20 & CWE-862 (Missing Authorization & Replay)**<br>• Relies solely on frontend JavaScript checks (easily bypassed with curl/Burp).<br>• No atomic single-use confirmation state machines. | 🔓 **Unauthorized Asset Overwrite & Race Conditions**<br>Attackers overwrite other users' files or upload unauthorized payloads. |
