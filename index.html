@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure Next Upload — Defense-in-Depth File Upload Engine for Next.js & React</title>
-  <meta name="description" content="Production-grade, zero-server-bandwidth secure file and media upload system for Next.js. Powered by 5-layer binary magic byte inspection, Web Worker EXIF stripping, and Cloudflare R2 / S3 presigned PUT URLs. Built by security researcher axosolaman.">
-  <meta name="keywords" content="secure-next-upload, axosolaman, file upload nextjs, s3 presigned url, zero bandwidth upload, cwe-434, magic bytes, exif stripper, react file upload">
+  <title>Secure Next Upload — Zero-Bandwidth File Upload Engine for Next.js & React</title>
+  <meta name="description" content="Production-grade, zero-server-bandwidth secure file and media upload system for Next.js. Direct-to-Cloudflare R2 / S3 streaming with 16-byte magic byte verification, client-side Web Worker EXIF stripping, and parallel concurrency. Built by security researcher axosolaman.">
+  <meta name="keywords" content="secure-next-upload, axosolaman, file upload nextjs, s3 presigned url, zero bandwidth upload, magic bytes, exif stripper, react file upload">
   <meta name="author" content="axosolaman (Axo Security)">
   
   <!-- OpenGraph / Social Media -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://secure-next-upload.axosolaman.online/">
   <meta property="og:title" content="Secure Next Upload — 0-Bandwidth File Upload Engine with 5-Layer Security">
-  <meta property="og:description" content="Eliminate $30k+ RCE webshell vulnerabilities and save 100% of server upload bandwidth in Next.js & React. Built by axosolaman.">
+  <meta property="og:description" content="Eliminate server RAM crashes and bandwidth costs with direct S3/R2 streaming, 16-byte binary verification, and Web Worker EXIF stripping. Built by axosolaman.">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -161,16 +161,16 @@
   <section class="relative pt-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto text-center">
     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-card border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-8 animate-float">
       <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-      <span>0 KB Server Bandwidth • CWE-434 Immune • 5-Layer Inspection</span>
+      <span>0 KB Server Load • S3/R2 Direct-to-Storage • 16-Byte Binary Verification</span>
     </div>
 
     <h1 class="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-5xl mx-auto leading-[1.15]">
-      The Defense-in-Depth <br>
+      The Zero-Server-Bandwidth <br>
       <span class="gradient-text">File Upload Engine</span> for Next.js
     </h1>
 
     <p class="mt-6 text-lg sm:text-xl text-slate-300 max-w-3xl mx-auto font-normal leading-relaxed">
-      Eliminate the <strong class="text-white">$30k+ RCE webshell vulnerabilities</strong> (CWE-434), prevent user GPS data leaks in client Web Workers, and upload batches <strong class="text-cyan-400">3x–5x faster</strong> directly to Cloudflare R2 / AWS S3.
+      Eliminate server RAM saturation, Vercel payload limits, and high bandwidth bills. Direct-to-S3/R2 presigned streaming with <strong class="text-white">client-side Web Worker EXIF stripping</strong>, <strong class="text-cyan-400">16-byte magic byte validation</strong>, and <strong class="text-emerald-400">3x–5x parallel concurrency</strong>.
     </p>
 
     <!-- CTAs -->

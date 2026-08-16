@@ -10,13 +10,13 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 > **The definitive high-performance, zero-server-bandwidth secure file and media upload engine for Next.js, React, and modern web architectures.**  
-> Built by security researchers to systematically eliminate the **#1 highest-paying vulnerability classes** (CWE-434, CWE-22, CWE-200, Stored XSS) while saving companies thousands in cloud bandwidth, server RAM crashes, and storage bills.
+> Built by security researchers to eliminate server RAM saturation, Vercel payload limits, and expensive bandwidth costs with direct-to-S3/R2 presigned streaming, 16-byte magic byte validation, and client Web Worker EXIF stripping.
 
 ---
 
 ## ⚡ Why Secure Next Upload?
 
-Traditional file upload architectures stream massive binary payloads directly through your backend API servers. This saturates bandwidth, crashes serverless runtimes (e.g. Vercel 4.5MB payload limits), inflates hosting bills, and exposes applications to malicious webshell uploads.
+Traditional file upload architectures stream massive binary payloads directly through your backend API servers. This saturates bandwidth, crashes serverless runtimes (e.g. Vercel 4.5MB payload limits), and inflates hosting bills.
 
 **Secure Next Upload delivers a modern, frictionless architecture:**
 
