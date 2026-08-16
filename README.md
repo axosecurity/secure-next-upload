@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 > **The definitive high-performance, zero-server-bandwidth secure file and media upload engine for Next.js, React, and modern web architectures.**  
-> Built by security researchers to eliminate server RAM saturation, Vercel payload limits, and expensive bandwidth costs with direct-to-S3/R2 presigned streaming, 16-byte magic byte validation, and client Web Worker EXIF stripping.
+> Built by security researchers to eliminate server RAM saturation, Vercel payload limits, and expensive bandwidth costs with direct-to-S3/R2 presigned streaming and a 5-layer security pipeline that delivers defense-in-depth protection without sacrificing upload speed or production efficiency.
 
 ---
 
