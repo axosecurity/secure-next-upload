@@ -38,6 +38,7 @@ export function FileDropzone({
     currentStep,
     progress,
     error,
+    fileItems,
     isUploading,
   } = useFileUpload({
     ...uploadOptions,
@@ -147,6 +148,7 @@ export function FileDropzone({
         currentStep={currentStep}
         progress={progress}
         errorMessage={error}
+        fileItems={fileItems}
       />
     </div>
   );
