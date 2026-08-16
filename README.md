@@ -9,7 +9,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue.svg)]()
 
 > **The definitive security-hardened, zero-server-bandwidth file and media upload engine for Next.js, React, and modern web architectures.**  
-> Built by security researchers to systematically eliminate the **#1 highest-paying vulnerability classes** (CWE-434, CWE-22, CWE-200, Stored XSS) while saving companies thousands in bandwidth, memory crashes, and cloud infrastructure bills.
+> Built by security researcher **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)) to systematically eliminate the **#1 highest-paying vulnerability classes** (CWE-434, CWE-22, CWE-200, Stored XSS) while saving companies thousands in bandwidth, memory crashes, and cloud infrastructure bills.
 
 ---
 
@@ -605,6 +605,14 @@ export async function runCron() {
   console.log(`Cleaned up ${result.cleaned} abandoned intents.`);
 }
 ```
+
+---
+
+## 👨‍💻 Author & Security Research
+
+Built with defensive security engineering and research by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
+* **Specialization**: Web Application Security, Bug Bounty Research, Zero-Trust Cloud Architectures, and Proactive Vulnerability Mitigation.
+* **Mission**: Eliminating high-risk file upload attack vectors from modern production codebases.
 
 ---
 

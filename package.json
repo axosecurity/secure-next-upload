@@ -50,7 +50,7 @@
     "drizzle",
     "prisma"
   ],
-  "author": "Axo Security",
+  "author": "axosolaman (Axo Security)",
   "license": "MIT",
   "peerDependencies": {
     "next": "^14.0.0 || ^15.0.0",
