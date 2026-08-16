@@ -6,7 +6,7 @@
 [![Bug Bounty Hardened](https://img.shields.io/badge/Bug%20Bounty-Hardened-orange.svg)]()
 
 > **Authored by Security Researcher [axosolaman](https://github.com/axosolaman) ([Axo Security](https://github.com/axosecurity))**  
-> *A technical deep-dive into file upload vulnerability mechanics, bug bounty economics, CWE mitigation mappings, and defensive cloud storage engineering.*
+> *A technical deep-dive into file upload vulnerability mechanics, bug bounty economics, CWE mitigation mappings, defensive cloud storage engineering, and curated learning references.*
 
 ---
 
@@ -17,8 +17,9 @@
 4. [5-Layer Defense-in-Depth Pipeline Architecture](#4-5-layer-defense-in-depth-pipeline-architecture)
 5. [End-to-End Sequence Diagram](#5-end-to-end-sequence-diagram)
 6. [Attacker Exploit Scenarios & How Universal Uploader Neutralizes Them](#6-attacker-exploit-scenarios--how-universal-uploader-neutralizes-them)
-7. [Reporting a Vulnerability](#7-reporting-a-vulnerability)
-8. [Author & Security Researcher Bio](#8-author--security-researcher-bio)
+7. [Vulnerability Learning Resources & Research References](#7-vulnerability-learning-resources--research-references)
+8. [Reporting a Vulnerability](#8-reporting-a-vulnerability)
+9. [Author & Security Researcher Bio](#9-author--security-researcher-bio)
 
 ---
 
@@ -193,7 +194,48 @@ sequenceDiagram
 
 ---
 
-## 7. Reporting a Vulnerability
+## 7. 📚 Vulnerability Learning Resources & Research References
+
+A curated collection of industry-standard security research, interactive labs, and exploit walkthroughs mapped to each vulnerability class:
+
+### 1. Unrestricted File Upload (CWE-434) – Core Vulnerability
+* 🧪 **[PortSwigger Web Security Academy: File Upload Vulnerabilities](https://portswigger.net/web-security/file-upload)** — Industry-standard interactive labs and comprehensive exploit walkthroughs.
+* 📖 **[OWASP Unrestricted File Upload Guide](https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload)** — Foundational vulnerability breakdown and threat impact.
+* 📋 **[OWASP File Upload Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html)** — Practical architectural checklist for production upload hardening.
+* 🛠️ **[The Hacker Recipes: Unrestricted File Upload](https://www.thehacker.recipes/web/inputs/unrestricted-file-upload)** — Concise, attacker-focused payload guide and bypass techniques.
+* 📘 **[Techearl: File Upload Vulnerabilities Practitioner Guide](https://techearl.com/file-upload-vulnerabilities)** — Modern technical guide analyzing polyglots and real CVE scenarios.
+* 🛡️ **[Offensive360: Insecure File Upload Knowledge Base](https://offensive360.com/knowledge-base/insecure-file-upload/)** — Clear vulnerability-to-remediation analysis.
+
+### 2. Magic Bytes, Content-Type Spoofing & Polyglots
+* 🧪 **[PortSwigger: Flawed File Type Validation Labs](https://portswigger.net/web-security/file-upload)** — Practical labs demonstrating magic byte inspection and Content-Type spoofing bypasses.
+* 🔍 **[Intigriti: Advanced Insecure File Upload Exploitation Guide](https://www.intigriti.com/researchers/blog/hacking-tools/insecure-file-uploads-a-complete-guide-to-finding-advanced-file-upload-vulnerabilities)** — Deep dive into magic byte spoofing, polyglot construction, and parser edge cases.
+* 📜 **[Bug Bounty Playbook: File Operations & Uploads](https://bugbounty.info/Attack-Surface/Web/File-Operations/File-Upload)** — Practical methodology for auditing file upload attack surfaces.
+* 📑 **[Wikipedia: List of File Signatures](https://en.wikipedia.org/wiki/List_of_file_signatures)** — Authoritative reference table for file magic bytes and hex headers.
+
+### 3. Reliance on Filename/Extension (CWE-646) & Path Traversal (CWE-22)
+* 🧪 **[PortSwigger: Path Traversal via Upload Filenames](https://portswigger.net/web-security/file-upload)** — Labs showing `../` traversal, null-byte injections, and path hijacking in uploads.
+* 📖 **[MITRE CWE-646 Official Definition](https://cwe.mitre.org/data/definitions/646.html)** — Formal definition and illustrative examples of filename reliance weaknesses.
+* 📖 **[MITRE CWE-22 (Improper Limitation of a Pathname)](https://cwe.mitre.org/data/definitions/22.html)** — Path traversal fundamentals and directory climbing risks.
+
+### 4. Server-Side EXIF & Metadata Processing Risks (RCE via Parsers)
+* 💥 **[HackerOne Report #1154542: GitLab ExifTool RCE (CVE-2021-22205)](https://hackerone.com/reports/1154542)** — Original high-profile disclosure by researcher `@vakzz` resulting in critical pre-auth RCE.
+* 🔬 **[BlackBerry Threat Research: From Fix to Exploit (CVE-2021-22204 in ExifTool)](https://blogs.blackberry.com/en/2021/06/from-fix-to-exploit-arbitrary-code-execution-for-cve-2021-22204-in-exiftool)** — Detailed reverse-engineering and exploit mechanics of ExifTool DjVu parser execution.
+* 📝 **[INE Security: GitLab ExifTool Command Injection Walkthrough](https://ine.com/blog/exiftool-command-injection-cve-2021-22204)** — Step-by-step breakdown of metadata command execution.
+* ⚙️ **[Rapid7 Metasploit Module: GitLab ExifTool RCE](https://github.com/rapid7/metasploit-framework/blob/master/modules/exploits/multi/http/gitlab_exif_rce.rb)** — Working exploit chain demonstration for educational lab analysis.
+
+### 5. EXIF & Geolocation Privacy Leakage (CWE-200 / CWE-212 / CWE-359)
+* 📖 **[MITRE CWE-200: Exposure of Sensitive Information](https://cwe.mitre.org/data/definitions/200.html)** — Overview of metadata leakage vectors.
+* 📖 **[MITRE CWE-212: Improper Removal of Sensitive Information](https://cwe.mitre.org/data/definitions/212.html)** — Weakness classification for failing to strip metadata before public storage.
+* 📖 **[MITRE CWE-359: Exposure of Private Personal Information](https://cwe.mitre.org/data/definitions/359.html)** — Privacy compliance implications of GPS coordinate exposure.
+
+### 6. General Web Application Security Testing Guides
+* 🎓 **[PortSwigger Learning Path: File Upload Vulnerabilities](https://portswigger.net/web-security/learning-paths/file-upload-vulnerabilities)** — Complete structured curriculum for learning file upload security.
+* 🛡️ **[OWASP WSTG: Test Upload of Unexpected File Types](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/08-Test_Upload_of_Unexpected_File_Types)** — Official OWASP penetration testing methodology.
+* 🛡️ **[OWASP WSTG: Test Upload of Malicious Files](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/10-Business_Logic_Testing/09-Test_Upload_of_Malicious_Files)** — Comprehensive checklist for auditing malicious upload attack paths.
+
+---
+
+## 8. Reporting a Vulnerability
 
 Security is our top priority. If you discover a security vulnerability or potential bypass in `@axosecurity/universal-uploader`, please report it responsibly:
 
@@ -203,7 +245,7 @@ Security is our top priority. If you discover a security vulnerability or potent
 
 ---
 
-## 8. Author & Security Researcher Bio
+## 9. Author & Security Researcher Bio
 
 **Universal Secure File & Media Uploader** is architected and maintained by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
 
