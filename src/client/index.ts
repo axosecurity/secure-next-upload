@@ -1,5 +1,5 @@
 /**
- * @axosecurity/secure-next-upload/client
+ * @axosolaman/secure-next-upload/client
  * Client-side React hooks, Web Worker compression, and upload UI components.
  * 
  * @author axosolaman (Axo Security)

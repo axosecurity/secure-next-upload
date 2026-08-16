@@ -1,6 +1,6 @@
-# 🚀 Secure Next Upload (`@axosecurity/secure-next-upload`)
+# 🚀 Secure Next Upload (`@axosolaman/secure-next-upload`)
 
-[![npm version](https://img.shields.io/npm/v/@axosecurity/secure-next-upload.svg)](https://www.npmjs.com/package/@axosecurity/secure-next-upload)
+[![npm version](https://img.shields.io/npm/v/@axosolaman/secure-next-upload.svg)](https://www.npmjs.com/package/@axosolaman/secure-next-upload)
 [![Security Researcher: axosolaman](https://img.shields.io/badge/Security%20Researcher-axosolaman-blue.svg)](https://github.com/axosolaman)
 [![Research: Axo Security](https://img.shields.io/badge/Research-Axo%20Security-purple.svg)](https://github.com/axosecurity)
 [![CWE-434 Mitigated](https://img.shields.io/badge/CWE--434-Immune-brightgreen.svg)]()
@@ -72,7 +72,7 @@ File upload endpoints are historically the most exploited attack surface on bug 
 
 | Project | Similarity | Key Strengths | Missing / Weaker Compared to Secure Next Upload | Best For |
 | :--- | :--- | :--- | :--- | :--- |
-| **`@axosecurity/secure-next-upload`** | ⭐️ **Current** | **Zero Server Bandwidth**, 5-layer security verification, 16-byte magic byte check, Web Worker EXIF stripping, parallel concurrency pool (`concurrency: 3-5`), atomic replacement, multi-entity registry. | None — complete end-to-end production architecture. | **Production apps wanting maximum security, speed & $0 cloud markup.** |
+| **`@axosolaman/secure-next-upload`** | ⭐️ **Current** | **Zero Server Bandwidth**, 5-layer security verification, 16-byte magic byte check, Web Worker EXIF stripping, parallel concurrency pool (`concurrency: 3-5`), atomic replacement, multi-entity registry. | None — complete end-to-end production architecture. | **Production apps wanting maximum security, speed & $0 cloud markup.** |
 | **`next-upload`** *(TimMikeladze)* | **High** | Presigned URLs, Next.js focused, optional DB metadata, S3/R2/MinIO support. | Weaker security (no deep 16-byte magic byte inspection, no multi-entity registry, no client-side Web Worker EXIF/compression). | Simple Next.js apps needing basic presigned uploads. |
 | **`vs3`** | **High** | Type-safe, presigned uploads, magic-byte detection, React hooks, Next.js handlers, Zod schemas. | Less opinionated multi-entity registry, no built-in atomic asset replace (`swapMode: "atomic_replace"`), or 5-layer pipeline. | Developers wanting basic type safety + single-file validation. |
 | **`octoload`** | **Medium-High** | Direct-to-S3/R2, CLI for schema generation, Drizzle integration, TypeScript-first. | Image-focused, lacks comprehensive 5-layer security pipeline and client-side EXIF/compression. | Teams using Drizzle wanting CLI-generated code. |
@@ -123,10 +123,10 @@ If you build with or rely on traditional alternatives, your application remains 
 
 ```bash
 # Using npm
-npm install @axosecurity/secure-next-upload @aws-sdk/client-s3 @aws-sdk/s3-request-presigner browser-image-compression zod sonner
+npm install @axosolaman/secure-next-upload @aws-sdk/client-s3 @aws-sdk/s3-request-presigner browser-image-compression zod sonner
 
 # Using pnpm
-pnpm add @axosecurity/secure-next-upload @aws-sdk/client-s3 @aws-sdk/s3-request-presigner browser-image-compression zod sonner
+pnpm add @axosolaman/secure-next-upload @aws-sdk/client-s3 @aws-sdk/s3-request-presigner browser-image-compression zod sonner
 ```
 
 ---
@@ -152,7 +152,7 @@ DATABASE_URL="postgresql://user:password@localhost:5432/mydb"
 ### 2. Define Upload Rules (`src/config/uploader.ts`)
 
 ```typescript
-import { defineUploadRegistry } from "@axosecurity/secure-next-upload/config";
+import { defineUploadRegistry } from "@axosolaman/secure-next-upload/config";
 
 export const uploadRegistry = defineUploadRegistry({
   avatar: {
@@ -193,7 +193,7 @@ export const uploadRegistry = defineUploadRegistry({
 
 #### `src/app/api/upload/request/route.ts`
 ```typescript
-import { createUploadRequestHandler } from "@axosecurity/secure-next-upload/server";
+import { createUploadRequestHandler } from "@axosolaman/secure-next-upload/server";
 import { uploadRegistry } from "@/config/uploader";
 import { db } from "@/db";
 
@@ -216,7 +216,7 @@ export const POST = createUploadRequestHandler({
 
 #### `src/app/api/upload/confirm/route.ts`
 ```typescript
-import { createUploadConfirmHandler } from "@axosecurity/secure-next-upload/server";
+import { createUploadConfirmHandler } from "@axosolaman/secure-next-upload/server";
 import { uploadRegistry } from "@/config/uploader";
 import { db } from "@/db";
 
@@ -242,7 +242,7 @@ export const POST = createUploadConfirmHandler({
 ```tsx
 "use client";
 
-import { useFileUpload } from "@axosecurity/secure-next-upload/client";
+import { useFileUpload } from "@axosolaman/secure-next-upload/client";
 
 export function GalleryUpload() {
   const {
@@ -288,7 +288,7 @@ export function GalleryUpload() {
 ### 2. Multi-File Cloud Dropzone
 
 ```tsx
-import { FileDropzone } from "@axosecurity/secure-next-upload/client";
+import { FileDropzone } from "@axosolaman/secure-next-upload/client";
 
 export function GallerySection() {
   return (
@@ -309,7 +309,7 @@ export function GallerySection() {
 ### 3. Circular Avatar Uploader
 
 ```tsx
-import { AvatarUploader } from "@axosecurity/secure-next-upload/client";
+import { AvatarUploader } from "@axosolaman/secure-next-upload/client";
 
 export function ProfileHeader({ user }) {
   return (
@@ -329,7 +329,7 @@ export function ProfileHeader({ user }) {
 ### 4. Document & Attachment Vault
 
 ```tsx
-import { DocumentUploader } from "@axosecurity/secure-next-upload/client";
+import { DocumentUploader } from "@axosolaman/secure-next-upload/client";
 
 export function AttachmentsList() {
   return (
@@ -426,7 +426,7 @@ Add this CORS configuration to your Cloudflare R2 or AWS S3 bucket:
 
 ## 👨‍💻 Author & Security Researcher Profile
 
-**Secure Next Upload** (`@axosecurity/secure-next-upload`) is created, architected, and maintained by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
+**Secure Next Upload** (`@axosolaman/secure-next-upload`) is created, architected, and maintained by **[axosolaman](https://github.com/axosolaman)** ([Axo Security](https://github.com/axosecurity)).
 
 * **Lead Security Researcher**: **[axosolaman](https://github.com/axosolaman)**
 * **GitHub Profile**: [@axosolaman](https://github.com/axosolaman)

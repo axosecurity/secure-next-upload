@@ -237,7 +237,7 @@ A curated collection of industry-standard security research, interactive labs, a
 
 ## 8. Reporting a Vulnerability
 
-Security is our top priority. If you discover a security vulnerability or potential bypass in `@axosecurity/secure-next-upload`, please report it responsibly:
+Security is our top priority. If you discover a security vulnerability or potential bypass in `@axosolaman/secure-next-upload`, please report it responsibly:
 
 * **Email**: `security@axosecurity.com` (or reach out directly on GitHub to [@axosolaman](https://github.com/axosolaman))
 * Please include proof-of-concept steps, affected component versions, and exploit impact.

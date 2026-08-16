@@ -1,5 +1,5 @@
 /**
- * @axosecurity/secure-next-upload
+ * @axosolaman/secure-next-upload
  * Production-grade, zero-server-bandwidth secure multi-entity file & media upload system.
  * 
  * @author axosolaman (Axo Security)

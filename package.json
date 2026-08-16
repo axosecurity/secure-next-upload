@@ -1,5 +1,5 @@
 {
-  "name": "@axosecurity/secure-next-upload",
+  "name": "@axosolaman/secure-next-upload",
   "version": "1.1.0",
   "description": "Production-grade, zero-server-bandwidth secure multi-entity file and media upload system with 5-layer security verification for Next.js and modern web apps.",
   "main": "./dist/index.js",
