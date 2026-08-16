@@ -91,6 +91,21 @@ File upload endpoints are historically the most exploited attack surface on bug 
 
 ---
 
+### ⚠️ What Vulnerabilities & Risks Do Alternatives Create?
+
+If you build with or rely on traditional alternatives, your application remains exposed to specific architectural attack vectors:
+
+| Alternative Architecture / Pattern | Vulnerabilities & Security Risks Introduced | Real-World Impact on Your App |
+| :--- | :--- | :--- |
+| **Traditional Server Buffering (`Multer`, `Busboy`, raw API routes)** | **CWE-400 (Denial of Service / OOM Crashes)**<br>• Full binary payload buffers into server memory.<br>• Serverless functions (Vercel / AWS Lambda) crash instantly on 4.5MB limit.<br>• Heavy server CPU spikes and bandwidth saturation. | 💥 **Server Outages & Wasted Bandwidth**<br>Thousands in bloated cloud bills; memory crashes during concurrent traffic spikes. |
+| **Basic Presigned URLs (`next-upload`, DIY S3 scripts)** | **CWE-434 & CWE-646 (MIME & Extension Spoofing)**<br>• Lacks deep 16-byte binary magic byte inspection.<br>• Blindly trusts client-provided `Content-Type` headers.<br>• Polyglot webshells (`shell.php.png`) pass through to cloud storage. | 🚨 **Remote Code Execution (RCE) / Malware Hosting**<br>Attackers host phishing pages or executable malware directly on your CDN domain. |
+| **Server-Side EXIF Processing (`ExifTool`, `ImageMagick`)** | **Command Injection / SSRF / Memory Corruption**<br>• Backend server invokes CLI parsers on untrusted binary inputs.<br>• Exposes infrastructure to **CVE-2021-22204 (GitLab RCE)** and ImageTragick. | 💀 **Critical Server Takeover (CVSS 10.0)**<br>Attackers execute arbitrary shell commands inside your server environment. |
+| **Unstripped Raw Uploads (No Client Web Worker Stripping)** | **CWE-200 / CWE-359 (EXIF Geolocation Leakage)**<br>• Uploads unstripped camera photos to public storage buckets.<br>• Leaks precise GPS latitude/longitude, home addresses, device serials. | ⚖️ **User Doxxing & GDPR/HIPAA Fines**<br>Massive regulatory privacy violation penalties and permanent user trust destruction. |
+| **Client-Only Libraries without Intent States (`Uppy` alone)** | **CWE-20 & CWE-862 (Missing Authorization & Replay)**<br>• Relies solely on frontend JavaScript checks (easily bypassed with curl/Burp).<br>• No atomic single-use confirmation state machines. | 🔓 **Unauthorized Asset Overwrite & Race Conditions**<br>Attackers overwrite other users' files or upload unauthorized payloads. |
+| **No Atomic Replacement (`swapMode: "append"` only)** | **Storage Bloat & Dead Orphan Accumulation**<br>• Updating an avatar leaves old files orphaned indefinitely on S3.<br>• Failed/abandoned presigned URLs accumulate unverified storage bills. | 💸 **Exponential Cloud Storage Billing**<br>Paying for thousands of gigabytes of dead, unlinked zombie files. |
+
+---
+
 ## 💡 Real-World Use Cases
 
 1. **User Profile & Avatar Management**:
